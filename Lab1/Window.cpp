@@ -32,11 +32,11 @@ void Window::Create()
     m_window.setVerticalSyncEnabled(true); // frames displaying at monitor refresh rate
 
     glEnable(GL_BLEND); // enable opaque parameter for glColor4
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // rule for calculating blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // function for calculating blending
 
     glLineWidth(2); // x2 line width for nicer lines at angles
 
-    m_window.setActive(true); // activating window for opengl rendering
+    m_window.setActive(true); // activate window for opengl rendering
 }
 
 void Window::Destroy()
@@ -61,7 +61,7 @@ void Window::Update()
         else if (event.type == sf::Event::Resized)
         {
             // adjust the viewport when the window is resized
-            glViewport(0, 0, event.size.width, event.size.height); // calculating opengl coordinates from display coordinates 
+            glViewport(0, 0, event.size.width, event.size.height); // calculate opengl coordinates from display coordinates 
             m_windowSize = m_window.getSize(); // update attribute for GetWindowSize
         }
     }
@@ -87,12 +87,12 @@ sf::Window* Window::GetWindow()
 
 void Window::BeginDraw() 
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 
+    glClear(GL_COLOR_BUFFER_BIT); //  clear color buffer
 }
 
 void Window::EndDraw() 
 {
-    glFlush();
+    glFlush(); // force execution of GL commands
     m_window.display();
 }
 

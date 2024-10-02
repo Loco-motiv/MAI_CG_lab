@@ -16,5 +16,5 @@ file(GLOB SOURCES ./*cpp ./*h)
 # Добавление исполняемого файла
 add_executable(Lab1 ${SOURCES})
 
-# Связывание с библиотеками SFML
+# Связывание с библиотеками
 target_link_libraries(Lab1 sfml-window opengl32) 

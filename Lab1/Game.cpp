@@ -2,7 +2,7 @@
 
 Game::Game(): m_window("Lab1", sf::Vector2u(800, 600)), m_rect_point_1(-0.5f, 0.5f), m_rect_point_2(0.5f, -0.5f),
     m_line_count(5), m_line_approved(m_line_count), m_lines_in_rect(m_line_count), m_button_count(2),
-    m_is_button_pressed(2, false), m_draw_stipple(false), m_stipple_line_lengths(m_line_count)
+    m_is_button_pressed(2, false), m_draw_stipple(false), m_stipple_line_lengths(m_line_count), m_move_speed(0.002)
 {
     std::srand(time(0));
     for (int i = 0; i < m_line_count; i++)
@@ -62,16 +62,16 @@ void Game::Render()
         {
             if (m_line_approved[i])
             {
-                m_window.DrawLine(m_lines[i].first, m_lines_in_rect[i].first, true, 0.4f,
+                m_window.DrawLine(m_lines[i].first, m_lines_in_rect[i].first, false, 0.4f,
                     1.f, 0.f, 0.f,
                     (m_line_lengths[i] - m_stipple_line_lengths[i].first)/m_line_lengths[i], 0.f, m_stipple_line_lengths[i].first/m_line_lengths[i]);
-                m_window.DrawLine(m_lines[i].second, m_lines_in_rect[i].second, true, 0.4f,
+                m_window.DrawLine(m_lines[i].second, m_lines_in_rect[i].second, false, 0.4f,
                     0.f, 0.f, 1.f,
                     m_stipple_line_lengths[i].second/m_line_lengths[i], 0.f, (m_line_lengths[i] - m_stipple_line_lengths[i].second)/m_line_lengths[i]);
             }
             else
             {
-                m_window.DrawLine(m_lines[i].first, m_lines[i].second, true, 0.4f);
+                m_window.DrawLine(m_lines[i].first, m_lines[i].second, false, 0.4f);
             }
         }
     }
@@ -114,25 +114,25 @@ Window* Game::GetWindow() {
 
 void Game::HandleInput()
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && ((m_rect_point_1.y + 0.001) < 1.f))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && ((m_rect_point_1.y + m_move_speed) < 1.f))
     {
-        m_rect_point_1.y += 0.001;
-        m_rect_point_2.y += 0.001;
+        m_rect_point_1.y += m_move_speed;
+        m_rect_point_2.y += m_move_speed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && ((m_rect_point_2.y - 0.001) > -1.f))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && ((m_rect_point_2.y - m_move_speed) > -1.f))
     {
-        m_rect_point_1.y -= 0.001;
-        m_rect_point_2.y -= 0.001;
+        m_rect_point_1.y -= m_move_speed;
+        m_rect_point_2.y -= m_move_speed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && ((m_rect_point_1.x - 0.001) > -1.f))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && ((m_rect_point_1.x - m_move_speed) > -1.f))
     {
-        m_rect_point_1.x -= 0.001;
-        m_rect_point_2.x -= 0.001;
+        m_rect_point_1.x -= m_move_speed;
+        m_rect_point_2.x -= m_move_speed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && ((m_rect_point_2.x + 0.001) < 1.f))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && ((m_rect_point_2.x + m_move_speed) < 1.f))
     {
-        m_rect_point_1.x += 0.001;
-        m_rect_point_2.x += 0.001;
+        m_rect_point_1.x += m_move_speed;
+        m_rect_point_2.x += m_move_speed;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) && ((m_rect_point_2.x + 0.001) < 1.f) &&
         ((m_rect_point_1.y + 0.001) < 1.f) && ((m_rect_point_2.y - 0.001) > -1.f) &&
@@ -175,6 +175,7 @@ void Game::HandleInput()
                         {
                             m_lines[i].first = sf::Vector2f(2 * ((float)std::rand() / RAND_MAX) - 1, 1.8 * ((float)std::rand() / RAND_MAX) - 0.8);
                             m_lines[i].second = sf::Vector2f(2 * ((float)std::rand() / RAND_MAX) - 1, 1.8 * ((float)std::rand() / RAND_MAX) - 0.8);
+                            m_line_lengths[i] = GetDistance(m_lines[i].first, m_lines[i].second);
                         }
                     }
                     else if (i == 1)

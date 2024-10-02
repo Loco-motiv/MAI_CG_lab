@@ -3,7 +3,7 @@
 #include "vector"
 #include <cmath>
 
-typedef int OutCode;
+using OutCode = int;
 
 const int INSIDE = 0b0000;
 const int LEFT   = 0b0001;
@@ -27,6 +27,8 @@ private:
     OutCode ComputeOutCode(const sf::Vector2f& l_point);
     sf::Vector2f ConvertCoordinates(sf::Vector2i& l_point);
     float GetDistance(sf::Vector2f& l_point_1, sf::Vector2f& l_point_2);
+
+    float m_move_speed;
 
     bool m_draw_stipple;
     int m_line_count;
