@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Поиск пакета SFML
-set(SFML_DIR "C:/SFML/lib/cmake/SFML")
+set(SFML_DIR "C:/libs/SFML/lib/cmake/SFML")
 set(SFML_STATIC_LIBRARIES TRUE)
 
 find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
