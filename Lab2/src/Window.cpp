@@ -5,9 +5,15 @@ Window::Window() { Setup("Lab_2", sf::Vector2u(640, 480)); }
 Window::Window(const std::string &l_title, const sf::Vector2u &l_size)
 {
     Setup(l_title, l_size);
+    ConfigureOpenGL();
+    GetProgram();
+    MakeTriangleVAO();
 }
 
-Window::~Window() { Destroy(); }
+Window::~Window() 
+{ 
+    Destroy();
+}
 
 void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size)
 {
@@ -32,15 +38,7 @@ void Window::Create()
     m_window.create(sf::VideoMode(m_windowSize.x, m_windowSize.y), m_windowTitle, style, settings);
     m_window.setVerticalSyncEnabled(true); // frames displaying at monitor refresh rate
 
-    //hz
-    // glEnable(GL_BLEND); // enable opaque parameter for glColor4
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // function for calculating blending
-
-    // glLineWidth(2); // x2 line width for nicer lines at angles
-    //
-
     m_window.setActive(true); // activate window for opengl rendering
-    gladLoadGL();
 }
 
 void Window::Destroy()
@@ -91,7 +89,6 @@ sf::Window* Window::GetWindow()
 
 void Window::BeginDraw() 
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT); //  clear color buffer
 }
 
@@ -101,85 +98,137 @@ void Window::EndDraw()
     m_window.display();
 }
 
-void Window::DrawTriangle(glm::vec3 l_point_1, glm::vec3 l_point_2, glm::vec3 l_point_3)
+void Window::ConfigureOpenGL()
 {
-
+    gladLoadGL();
+    glClearColor(0.2f, 0.6f, 0.3f, 1.0f);
+    glEnable(GL_CULL_FACE); // enable culling faces
+    glCullFace(GL_BACK);    // cull back face
+    glFrontFace(GL_CCW);    // counter clock-wise
+    // glEnable(GL_DEPTH_TEST); // enable depth-testing
+    // glDepthFunc(GL_LESS);
 }
 
+void Window::GetProgram()
+{
+    const char *vertexShaderSource = "#version 460 core\n"
+                                     "layout(location = 0) in vec3 vertex_position;\n"
+                                     "layout(location = 1) in vec3 vertex_colour;\n"
+                                     "out vec3 colour;\n"
+                                     "void main() {\n"
+                                     "colour = vertex_colour;\n"
+                                     "gl_Position = vec4(vertex_position, 1.0);\n"
+                                     "}\n\0";
 
+    const char *fragmentShaderSource = "#version 460 core\n"
+                                       "in vec3 colour;\n"
+                                       "out vec4 frag_colour;\n"
+                                       "void main() {\n"
+                                       "frag_colour = vec4(colour, 1.0);\n"
+                                       "}\n\0";
 
-// void Window::DrawLine(sf::Vector2f &l_point_1, sf::Vector2f &l_point_2, bool l_is_stipple, GLfloat l_opacity, 
-//     GLfloat l_red_point_1, GLfloat l_green_point_1, GLfloat l_blue_point_1, GLfloat l_red_point_2,
-//     GLfloat l_green_point_2, GLfloat l_blue_point_2) 
-// {
-//     if (l_point_1 == l_point_2)
-//     {
-//         return;
-//     }  
-//     if (l_is_stipple)
-//     {
-//         glEnable(GL_LINE_STIPPLE); // enable stippling for next line
-//         glLineStipple(1, 0x00FF); // dash stipple
-//     }
-//     glBegin(GL_LINES);
-//         glColor4f(l_red_point_1, l_green_point_1, l_blue_point_1, l_opacity);
-//         glVertex2f(l_point_1.x, l_point_1.y);
-//         glColor4f(l_red_point_2, l_green_point_2, l_blue_point_2, l_opacity);
-//         glVertex2f(l_point_2.x, l_point_2.y);
-//     glEnd();
-//     if (l_is_stipple)
-//     {
-//         glDisable(GL_LINE_STIPPLE); // disable dash stippling for next lines
-//     }
-// }
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
 
-// void Window::DrawRect(sf::Vector2f &l_point_1, sf::Vector2f &l_point_2, bool l_is_black)
-// {
-//     glBegin(GL_LINE_LOOP);
-//         glColor3f(1.0f, 1.0f, 0.0f);
-//         if (l_is_black)
-//         {
-//             glColor3f(0.f, 0.f, 0.f);
-//         }
-//         glVertex2f(l_point_1.x, l_point_1.y);
-//         glColor3f(0.0f, 1.0f, 1.0f);
-//         if (l_is_black)
-//         {
-//             glColor3f(0.f, 0.f, 0.f);
-//         }
-//         glVertex2f(l_point_2.x, l_point_1.y);
-//         glColor3f(0.5f, 0.0f, 1.0f);
-//         if (l_is_black)
-//         {
-//             glColor3f(0.f, 0.f, 0.f);
-//         }
-//         glVertex2f(l_point_2.x, l_point_2.y);
-//         glColor3f(1.0f, 0.0f, 0.0f);
-//         if (l_is_black)
-//         {
-//             glColor3f(0.f, 0.f, 0.f);
-//         }
-//         glVertex2f(l_point_1.x, l_point_2.y);
-//     glEnd();
-// }
+    // check for compile errors
+    GLint success = -1;
+    GLchar infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (GL_TRUE != success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        return;
+    }
 
-// void Window::DrawFilledRect(sf::Vector2f &l_point_1, sf::Vector2f &l_point_2, GLfloat l_opacity, GLfloat l_red, GLfloat l_green, GLfloat l_blue)
-// {
-//     glBegin(GL_QUADS);
-//         glColor4f(l_red, l_green, l_blue, l_opacity);
-//         glVertex2f(l_point_1.x, l_point_1.y);
-//         glVertex2f(l_point_2.x, l_point_1.y);
-//         glVertex2f(l_point_2.x, l_point_2.y);
-//         glVertex2f(l_point_1.x, l_point_2.y);
-//     glEnd();
-// }
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
 
-// void Window::DrawTriangle(sf::Vector2f &l_point_1, sf::Vector2f &l_point_2, sf::Vector2f &l_point_3)
-// {
-//     glBegin(GL_TRIANGLES);
-//         glColor3f(0.0f, 0.0f, 0.0f);
-//         glVertex2f(l_point_1.x, l_point_1.y);
-//         glVertex2f(l_point_2.x, l_point_2.y);
-//         glVertex2f(l_point_3.x, l_point_3.y);
-//     glEnd();
-// }
+    // check for compile errors
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (GL_TRUE != success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        return;
+    }
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vertexShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (GL_TRUE != success)
+    {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        return;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    glUseProgram(shaderProgram);
+}
+
+void Window::MakeTriangleVAO()
+{
+    GLfloat points[] = {
+        0.0f, 0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 
+        0.5f, -0.5f, 0.0f};
+
+    GLfloat colours[] = {
+        1.0f, 0.0f, 0.0f, 
+        0.0f, 1.0f, 0.0f, 
+        0.0f, 0.0f, 1.0f};
+
+    GLuint pointsVBO;
+    glCreateBuffers(1, &pointsVBO);
+    // glGenBuffers(1, &pointsVBO);
+    // glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+    // glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+    glNamedBufferData(pointsVBO, 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+
+    GLuint coloursVBO;
+    glCreateBuffers(1, &coloursVBO);
+    // glGenBuffers(1, &coloursVBO);
+    // glBindBuffer(GL_ARRAY_BUFFER, coloursVBO);
+    // glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), colours, GL_STATIC_DRAW);
+    glNamedBufferData(coloursVBO, 9 * sizeof(GLfloat), colours, GL_STATIC_DRAW);
+
+    GLuint VAO;
+    // glGenVertexArrays(1, &VAO);
+    // glBindVertexArray(VAO);
+    glCreateVertexArrays(1, &VAO);
+
+    glVertexArrayVertexBuffer(VAO, 0, pointsVBO, 0, 3 * sizeof(GL_FLOAT));
+    glVertexArrayVertexBuffer(VAO, 1, coloursVBO, 0, 3 * sizeof(GL_FLOAT));
+    
+    glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(VAO, 1, 3, GL_FLOAT, GL_FALSE, 0);
+    
+    // glVertexArrayAttribBinding(VAO, 0, 0);
+    // glVertexArrayAttribBinding(VAO, 1, 1);
+
+    // glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), NULL);
+
+    // glBindBuffer(GL_ARRAY_BUFFER, coloursVBO);
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), NULL);
+    // glEnableVertexAttribArray(0);
+    // glEnableVertexAttribArray(1);
+
+    glEnableVertexArrayAttrib(VAO, 0);
+    glEnableVertexArrayAttrib(VAO, 1);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(VAO);
+}
+
+void Window::DrawTriangle()
+{
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+}
