@@ -1,8 +1,21 @@
 #include "Game.h"
 
-Game::Game(): m_window("Lab2", sf::Vector2u(800, 600))
+Game::Game(): m_window("Lab2", sf::Vector2u(800, 600)), m_GUI(&m_sharedContext, 0.5f, 1.0f, 0.15f, 0.04f)
 {
-    // std::srand(time(0));
+    m_sharedContext.graphics = &m_graphics;
+    m_sharedContext.window = &m_window;
+    m_sharedContext.shader = m_graphics.m_shader;
+
+    auto temp = std::bind([this](){ m_flag = !m_flag; });
+    // auto temp = std::bind(ChangeProjection, this);
+
+    m_GUI.MakeSlider("Turn speed", &m_turnSpeed, 0, 10);
+    m_GUI.MakeButton("Projection", temp);
+    m_GUI.MakeSlider("Scale", &m_scale, 0, 6);
+    m_GUI.MakeSlider("Element gap", &(m_GUI.m_elementGap), 0, 0.11);
+    m_GUI.MakeSlider("Left border", &(m_GUI.m_leftBorder), -1, 0.85);
+
+    m_viewMatrix.Move(0.0f, 0.0f, -3.0f);
 }
 
 Game::~Game() {} 
@@ -10,19 +23,45 @@ Game::~Game() {}
 void Game::Update() 
 {
     m_window.Update();
-    // for (int i = 0; i < m_line_count; i++)
-    // {
-    //     std::pair<sf::Vector2f, sf::Vector2f> new_pair(m_lines[i].first, m_lines[i].second);
-    //     //m_line_approved[i] = Clip(new_pair.first, new_pair.second);
-    //     m_lines_in_rect[i] = new_pair;
-    // }
+
+    MatrixFloat orthographicMatrix;
+    MatrixFloat perspectiveMatrix;
+    MatrixFloat modelMatrix;
+    MatrixFloat scaleModelMatrix;
+    MatrixFloat projectionMatrix;
+
+    scaleModelMatrix.ScaleXYZ(m_scale);
+    modelMatrix.Rotate((float)m_elapsedFixed.asSeconds() * m_turnSpeed, (float)m_elapsedFixed.asSeconds() * m_turnSpeed,
+        (float)m_elapsedFixed.asSeconds() * m_turnSpeed);
+    modelMatrix = scaleModelMatrix * modelMatrix;
+
+    if (m_flag)
+    {
+        orthographicMatrix.OrthographicProjection(
+            (float)m_window.GetWindowSize().x / (float)m_window.GetWindowSize().y, 1.0f, 1.0f, 0.1f, 100.0f);
+        projectionMatrix = orthographicMatrix;
+    }
+    else 
+    {
+        perspectiveMatrix.PerspectiveProjection(30,
+                                                (float)m_window.GetWindowSize().x / (float)m_window.GetWindowSize().y, 0.1f, 100.0f);
+        projectionMatrix = perspectiveMatrix;
+    }
+
+    m_transformMatrix = modelMatrix * m_viewMatrix * projectionMatrix;
+    
+    m_GUI.Update(m_elapsed.asMilliseconds());
 }
 
 void Game::Render()
 {
     m_window.BeginDraw();
 
-    m_window.DrawTriangle();
+    m_sharedContext.shader->SetFloat("alpha", 1.0f); //* all objects are 100% opaque by default
+    m_graphics.m_shader->SetFloatMatrix("transformMatrix", m_transformMatrix.GetArray());
+    m_graphics.DrawCube();
+    
+    m_GUI.Render();
 
     m_window.EndDraw();
 }
@@ -33,52 +72,11 @@ Window* Game::GetWindow() {
 
 void Game::HandleInput()
 {
-    // if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (m_elapsed_time_fixed > sf::seconds(0.25)))
-    // {
-    //     sf::Vector2i mouse_coordinates_sfml = sf::Mouse::getPosition(*m_window.GetWindow());
-    //     sf::Vector2f mouse_coordinates_opengl = ConvertCoordinates(mouse_coordinates_sfml);
-    //     for (int i = 0; i < m_button_count; i++)
-    //     {
-    //         if ((mouse_coordinates_opengl.x > m_buttons[i].first.x) && (mouse_coordinates_opengl.x < m_buttons[i].second.x)
-    //             && (mouse_coordinates_opengl.y < m_buttons[i].first.y) && (mouse_coordinates_opengl.y > m_buttons[i].second.y))
-    //             {
-    //                 if (i == 0)
-    //                 {
-    //                     for (int i = 0; i < m_line_count; i++)
-    //                     {
-    //                         m_lines[i].first = sf::Vector2f(2 * ((float)std::rand() / RAND_MAX) - 1, 1.8 * ((float)std::rand() / RAND_MAX) - 0.8);
-    //                         m_lines[i].second = sf::Vector2f(2 * ((float)std::rand() / RAND_MAX) - 1, 1.8 * ((float)std::rand() / RAND_MAX) - 0.8);
-    //                         m_line_lengths[i] = GetDistance(m_lines[i].first, m_lines[i].second);
-    //                     }
-    //                 }
-    //                 else if (i == 1)
-    //                 {
-    //                     m_draw_stipple = !m_draw_stipple;
-    //                 }
-    //                 m_elapsed_time_fixed -= sf::seconds(0.25);
-    //                 m_is_button_pressed[i] = true;
-    //             }
-    //     }
-    // }
+    m_GUI.HandleInput();
 }
 
 void Game::RestartClock() 
 {
-    m_elapsedFixed += m_clock.restart();
-    if (m_elapsedFixed > sf::seconds(0.27)) 
-    {
-        m_elapsedFixed -= sf::seconds(0.01);
-    }
+    m_elapsed = m_clock.restart();
+    m_elapsedFixed += m_elapsed;
 }
-
-// sf::Vector2f Game::ConvertCoordinates(sf::Vector2i& l_point)
-// {
-//     return sf::Vector2f(2.f * ((float)l_point.x / m_window.GetWindowSize().x) - 1.f,
-//         1.f - (2.f * ((float)l_point.y / m_window.GetWindowSize().y)));
-// }
-
-// float Game::GetDistance(sf::Vector2f& l_point_1, sf::Vector2f& l_point_2)
-// {
-//     return std::sqrt(std::pow(l_point_1.x - l_point_2.x, 2) +
-//             std::pow(l_point_1.y - l_point_2.y, 2));
-// }

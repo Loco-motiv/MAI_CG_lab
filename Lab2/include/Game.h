@@ -1,7 +1,7 @@
 #pragma once
-#include "Window.h"
-// #include "vector"
-// #include "cmath"
+
+#include "GUI.h"
+#include "Matrix.h"
 
 class Game{
 public:
@@ -15,10 +15,20 @@ public:
     void RestartClock();
 
 private:
-    // sf::Vector2f ConvertCoordinates(sf::Vector2i& l_point);
-    // float GetDistance(sf::Vector2f& l_point_1, sf::Vector2f& l_point_2);
+    SharedContext m_sharedContext;
 
     Window m_window;
+    Graphics m_graphics;
+    GUI m_GUI;
+
     sf::Clock m_clock;
+    sf::Time m_elapsed;
     sf::Time m_elapsedFixed;
+
+    GLboolean m_flag = false;
+    GLdouble m_turnSpeed = 1;
+    GLdouble m_scale = 0.8;
+
+    MatrixFloat m_viewMatrix;
+    MatrixFloat m_transformMatrix;
 };
