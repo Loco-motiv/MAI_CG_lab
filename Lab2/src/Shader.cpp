@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath)
+Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 {
     std::string vertexCode;
     std::string fragmentCode;
@@ -21,16 +21,16 @@ Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath)
         vShaderFile.close();
         fShaderFile.close();
         // convert stream into string
-        vertexCode = vShaderStream.str();
+        vertexCode   = vShaderStream.str();
         fragmentCode = fShaderStream.str();
     }
-    catch (std::ifstream::failure &error)
+    catch (std::ifstream::failure& error)
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error.what() << std::endl;
     }
 
-    const GLchar *vertexShaderCode = vertexCode.c_str();
-    const GLchar *fragmentShaderCode = fragmentCode.c_str();
+    const GLchar* vertexShaderCode   = vertexCode.c_str();
+    const GLchar* fragmentShaderCode = fragmentCode.c_str();
     // 2. compile shaders
     // vertex shader
     GLuint vertexID = glCreateShader(GL_VERTEX_SHADER);
@@ -61,22 +61,22 @@ void Shader::Use()
     glUseProgram(ID);
 }
 
-void Shader::SetBool(const std::string &name, const GLboolean value) const
+void Shader::SetBool(const std::string& name, const GLboolean value) const
 {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
-void Shader::SetInt(const std::string &name, const GLint value) const
+void Shader::SetInt(const std::string& name, const GLint value) const
 {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::SetFloat(const std::string &name, const GLfloat value) const
+void Shader::SetFloat(const std::string& name, const GLfloat value) const
 {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::SetFloatMatrix(const std::string &name, const GLfloat* matrix) const
+void Shader::SetFloatMatrix(const std::string& name, const GLfloat* matrix) const
 {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, matrix);
 }
@@ -93,7 +93,7 @@ void Shader::CheckCompileErrors(GLuint shader, std::string type)
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
             if (length > 0)
             {
-                GLchar *info(new GLchar[length]);
+                GLchar* info(new GLchar[length]);
                 glGetShaderInfoLog(shader, length, 0, info);
                 std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
                           << info << " -- --------------------------------------------------- -- " << std::endl;
@@ -101,7 +101,8 @@ void Shader::CheckCompileErrors(GLuint shader, std::string type)
             }
             else
             {
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type
+                          << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
     }
@@ -113,7 +114,7 @@ void Shader::CheckCompileErrors(GLuint shader, std::string type)
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
             if (length > 0)
             {
-                GLchar *info(new GLchar[length]);
+                GLchar* info(new GLchar[length]);
                 glGetShaderInfoLog(shader, length, 0, info);
                 std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
                           << info << " -- --------------------------------------------------- -- " << std::endl;
@@ -121,7 +122,8 @@ void Shader::CheckCompileErrors(GLuint shader, std::string type)
             }
             else
             {
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type
+                          << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
     }

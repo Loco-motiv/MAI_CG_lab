@@ -1,12 +1,12 @@
 #pragma once
 
-#include "SharedContext.h"
 #include "Matrix.h"
-// #include <SFML/Graphics/Text.hpp>
+#include "SharedContext.h"
+
 #include <SFML/Window/Keyboard.hpp>
-#include <vector>
 #include <functional>
 #include <string>
+#include <vector>
 
 class GUI;
 
@@ -17,8 +17,8 @@ public:
     virtual ~GUIElement() = 0;
 
     virtual void HandleInput(GLdouble xCoordinate, GLdouble yCoordinate) = 0;
-    virtual void Render() = 0;
-    virtual void Update(GLint l_elapsed) = 0;
+    virtual void Render()                                                = 0;
+    virtual void Update(GLint l_elapsed)                                 = 0;
 
     std::string m_name;
     GLdouble m_topBorder;
@@ -43,8 +43,8 @@ private:
 class Slider : public GUIElement
 {
 public:
-    Slider(std::string l_name, GLdouble* l_currentValue, GLdouble l_minValue, GLdouble l_maxValue, 
-        GLdouble l_topBorder, GUI* l_GUI);
+    Slider(std::string l_name, GLdouble* l_currentValue, GLdouble l_minValue, GLdouble l_maxValue,
+           GLdouble l_topBorder, GUI* l_GUI);
     ~Slider();
 
     void HandleInput(GLdouble xCoordinate, GLdouble yCoordinate);
@@ -59,12 +59,13 @@ private:
     GLdouble* m_currentValue;
 };
 
-//TODO class HUD : public GUIElement
+// TODO class HUD : public GUIElement
 
 class GUI
 {
 public:
-    GUI(SharedContext* l_sharedContext, GLdouble l_leftBorder, GLdouble l_rightBorder, GLdouble l_elementHeight, GLdouble l_elementGap);
+    GUI(SharedContext* l_sharedContext, GLdouble l_leftBorder, GLdouble l_rightBorder,
+        GLdouble l_elementHeight, GLdouble l_elementGap);
     ~GUI();
 
     SharedContext* m_sharedContext;
@@ -79,7 +80,7 @@ public:
     void Render();
     void HandleInput();
 
-    sf::Vector2f ConvertScreenCoordinates(sf::Vector2i &&l_point); //? where are you belong ?
+    sf::Vector2f ConvertScreenCoordinates(sf::Vector2i&& l_point); //? where are you belong ?
 
     // sf::Vector2i ConvertNDC(sf::Vector2f &&l_point) //TODO dodo
 

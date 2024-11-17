@@ -18,7 +18,7 @@ private:
     void MakeRectangleVAO(); //? color
     void FreeObjects();
     void ConfigureOpenGL();
-    
+
     GLuint m_triangleVAO;
     GLuint m_cubeVAO;
     GLuint m_rectangleVAO;

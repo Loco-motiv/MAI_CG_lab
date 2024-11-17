@@ -3,9 +3,9 @@
 #include "Graphics.h"
 #include "Window.h"
 
-struct SharedContext 
+struct SharedContext
 {
-    SharedContext(): window(nullptr), graphics(nullptr), shader(nullptr) {}
+    SharedContext() : window(nullptr), graphics(nullptr), shader(nullptr) {}
     Window* window;
     Graphics* graphics;
     Shader* shader;

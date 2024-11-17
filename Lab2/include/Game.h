@@ -3,7 +3,8 @@
 #include "GUI.h"
 #include "Matrix.h"
 
-class Game{
+class Game
+{
 public:
     Game();
     ~Game();
@@ -25,9 +26,9 @@ private:
     sf::Time m_elapsed;
     sf::Time m_elapsedFixed;
 
-    GLboolean m_flag = false;
+    GLboolean m_flag     = false;
     GLdouble m_turnSpeed = 1;
-    GLdouble m_scale = 0.8;
+    GLdouble m_scale     = 0.8;
 
     MatrixFloat m_viewMatrix;
     MatrixFloat m_transformMatrix;

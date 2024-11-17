@@ -7,10 +7,9 @@ Graphics::Graphics()
     MakeTriangleVAO();
     MakeCubeVAO();
     MakeRectangleVAO();
-    
 }
 
-Graphics::~Graphics() 
+Graphics::~Graphics()
 {
     FreeObjects();
 }
@@ -19,11 +18,11 @@ void Graphics::ConfigureOpenGL()
 {
     gladLoadGL();
     glClearColor(0.2f, 0.6f, 0.3f, 1.0f);
-    
+
     glEnable(GL_CULL_FACE);  //* enable culling faces
     glCullFace(GL_BACK);     //* cull back face
     glFrontFace(GL_CCW);     //* counter clock-wise
-    
+
     glEnable(GL_DEPTH_TEST); //* enable depth-testing
     glDepthFunc(GL_LESS);    //* write to z buffer then w value is less than present in buffer
 
@@ -43,15 +42,19 @@ void Graphics::FreeObjects()
 
 void Graphics::MakeTriangleVAO()
 {
+    // clang-format off
     GLfloat points[] = {
-        0.0f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 
-        0.5f, -0.5f, 0.0f};
+         0.0f,  0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f
+    };
 
     GLfloat colours[] = {
-        1.0f, 0.0f, 0.0f, 
-        0.0f, 1.0f, 0.0f, 
-        0.0f, 0.0f, 1.0f};
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
+    };
+    // clang-format on
 
     GLuint pointsVBO;
     glCreateBuffers(1, &pointsVBO);
@@ -65,10 +68,10 @@ void Graphics::MakeTriangleVAO()
 
     glVertexArrayVertexBuffer(m_triangleVAO, 0, pointsVBO, 0, 3 * sizeof(GL_FLOAT));
     glVertexArrayVertexBuffer(m_triangleVAO, 1, coloursVBO, 0, 3 * sizeof(GL_FLOAT));
-    
+
     glVertexArrayAttribFormat(m_triangleVAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribFormat(m_triangleVAO, 1, 3, GL_FLOAT, GL_FALSE, 0);
-    
+
     glVertexArrayAttribBinding(m_triangleVAO, 0, 0);
     glVertexArrayAttribBinding(m_triangleVAO, 1, 1);
 
@@ -78,17 +81,19 @@ void Graphics::MakeTriangleVAO()
 
 void Graphics::MakeCubeVAO()
 {
+    // clang-format off
     GLfloat vertices[] = {
-    //*  coordinates           colors
-         0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 1.0f, //* top right front
-         0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 1.0f, //* bottom right front
-        -0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f, //* bottom left front
-        -0.5f,  0.5f,  0.5f,   0.5f, 0.5f, 0.5f, //* top left front
-         0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f, //* top right back
-         0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f, //* bottom right back
-        -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f, //* bottom left back
-        -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 0.0f  //* top left back
+    //*  coordinates         colors
+         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, //* top right front
+         0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, //* bottom right front
+        -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, //* bottom left front
+        -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 0.5f, //* top left front
+         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, //* top right back
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, //* bottom right back
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //* bottom left back
+        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f  //* top left back
     };
+    // clang-format on
 
     GLuint indices[] = {
         //* front face
@@ -126,7 +131,7 @@ void Graphics::MakeCubeVAO()
 
     glVertexArrayAttribFormat(m_cubeVAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribFormat(m_cubeVAO, 1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT));
-    
+
     glVertexArrayAttribBinding(m_cubeVAO, 0, 0);
     glVertexArrayAttribBinding(m_cubeVAO, 1, 0);
 
@@ -136,20 +141,21 @@ void Graphics::MakeCubeVAO()
 
 void Graphics::MakeRectangleVAO()
 {
+    // clang-format off
     GLfloat vertices[] = {
-    //*  coordinates           colors
-         0.5f,  0.5f,  0.0f,   1.0f, 1.0f, 1.0f, //* top right
-         0.5f, -0.5f,  0.0f,   1.0f, 1.0f, 1.0f, //* bottom right
-        -0.5f, -0.5f,  0.0f,   1.0f, 1.0f, 1.0f, //* bottom left
-        -0.5f,  0.5f,  0.0f,   1.0f, 1.0f, 1.0f, //* top left
+    //*  coordinates        colors
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, //* top right
+         0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, //* bottom right
+        -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, //* bottom left
+        -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f  //* top left
     };
-
     GLuint indices[] = {
         //* top part
         0, 3, 1,
         //* bottom part
         3, 2, 1
     };
+    // clang-format on
 
     GLuint pointsVBO;
     glCreateBuffers(1, &pointsVBO);
@@ -166,7 +172,7 @@ void Graphics::MakeRectangleVAO()
 
     glVertexArrayAttribFormat(m_rectangleVAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribFormat(m_rectangleVAO, 1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT));
-    
+
     glVertexArrayAttribBinding(m_rectangleVAO, 0, 0);
     glVertexArrayAttribBinding(m_rectangleVAO, 1, 0);
 

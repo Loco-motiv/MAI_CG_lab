@@ -1,7 +1,8 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <cmath>
+#include <glad/glad.h>
+#include <iostream>
 
 class MatrixFloat
 {
@@ -20,7 +21,7 @@ public:
         m_elements[15] = 1.0f;
     }
 
-    MatrixFloat operator*(const MatrixFloat &other) const
+    MatrixFloat operator*(const MatrixFloat& other) const
     {
         MatrixFloat result;
         for (GLint row = 0; row < 4; ++row)
@@ -47,15 +48,15 @@ public:
         GLfloat rollSin  = std::sin(roll);
         GLfloat rollCos  = std::cos(roll);
 
-        m_elements[0]  = yawCos   * pitchCos                             ;
-        m_elements[1]  = yawSin   * pitchCos                             ;
-        m_elements[2]  = -1       * pitchSin                             ;
-        m_elements[4]  = yawCos   * pitchSin * rollSin - yawSin * rollCos;
-        m_elements[5]  = yawSin   * pitchSin * rollSin + yawCos * rollCos;
-        m_elements[6]  = pitchCos * rollSin                              ;
-        m_elements[8]  = yawCos   * pitchSin * rollCos + yawSin * rollSin;
-        m_elements[9]  = yawSin   * pitchSin * rollCos - yawCos * rollSin;
-        m_elements[10] = pitchCos * rollCos                              ;
+        m_elements[0]  = yawCos * pitchCos;
+        m_elements[1]  = yawSin * pitchCos;
+        m_elements[2]  = -1 * pitchSin;
+        m_elements[4]  = yawCos * pitchSin * rollSin - yawSin * rollCos;
+        m_elements[5]  = yawSin * pitchSin * rollSin + yawCos * rollCos;
+        m_elements[6]  = pitchCos * rollSin;
+        m_elements[8]  = yawCos * pitchSin * rollCos + yawSin * rollSin;
+        m_elements[9]  = yawSin * pitchSin * rollCos - yawCos * rollSin;
+        m_elements[10] = pitchCos * rollCos;
     }
 
     void Move(GLfloat xDelta, GLfloat yDelta, GLfloat zDelta)
@@ -83,12 +84,12 @@ public:
         m_elements[0]  = 1.0f / right;
         m_elements[5]  = 1.0f / top * aspectRatio;
         m_elements[10] = -2.0f / (back - front);
-        m_elements[14] = - (back + front) / (back - front);
+        m_elements[14] = -(back + front) / (back - front);
     }
 
     const GLfloat* GetArray() const
     {
-        return m_elements;  
+        return m_elements;
     }
 
     void Print() const
@@ -105,12 +106,12 @@ public:
 
     void ScaleX(GLfloat scale)
     {
-        m_elements[0]  *= scale;
+        m_elements[0] *= scale;
     }
-    
+
     void ScaleY(GLfloat scale)
     {
-        m_elements[5]  *= scale;
+        m_elements[5] *= scale;
     }
 
     void ScaleZ(GLfloat scale)
