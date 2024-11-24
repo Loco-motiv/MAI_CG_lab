@@ -9,4 +9,5 @@ struct SharedContext
     Window* window;
     Graphics* graphics;
     Shader* shader;
+    Shader* textShader;
 };

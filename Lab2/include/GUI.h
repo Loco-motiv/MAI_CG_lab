@@ -59,7 +59,21 @@ private:
     GLdouble* m_currentValue;
 };
 
-// TODO class HUD : public GUIElement
+class HUD : public GUIElement
+{
+public:
+    HUD(std::string l_name, GLdouble* l_currentValue, GLdouble l_topBorder, GUI* l_GUI);
+    HUD(std::string l_name, std::function<GLfloat()> l_getFunction, GLdouble l_topBorder, GUI* l_GUI);
+    ~HUD();
+
+    void HandleInput(GLdouble xCoordinate, GLdouble yCoordinate);
+    void Render();
+    void Update(GLint l_elapsed);
+
+private:
+    GLdouble* m_currentValue = nullptr;
+    std::function<GLfloat()> m_getFunction;
+};
 
 class GUI
 {
@@ -74,15 +88,18 @@ public:
     GLdouble m_elementHeight;
     GLdouble m_elementGap;
 
+    GLfloat m_NDCTransformerX;
+    GLfloat m_NDCTransformerY;
+
     void MakeButton(std::string l_name, std::function<void()> l_callback);
     void MakeSlider(std::string l_name, GLdouble* l_currentValue, GLdouble l_minValue, GLdouble l_maxValue);
+    void MakeHUDElement(std::string l_name, GLdouble* l_currentValue);
+    void MakeHUDElement(std::string l_name, std::function<GLfloat()> l_getFunction);
     void Update(GLint l_elapsed);
     void Render();
     void HandleInput();
 
-    sf::Vector2f ConvertScreenCoordinates(sf::Vector2i&& l_point); //? where are you belong ?
-
-    // sf::Vector2i ConvertNDC(sf::Vector2f &&l_point) //TODO dodo
+    sf::Vector2f ConvertScreenCoordinates(sf::Vector2i&& l_point);
 
 private:
     GLdouble m_topBorder = 1.0f - m_elementGap / 2;

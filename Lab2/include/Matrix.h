@@ -79,11 +79,13 @@ public:
         m_elements[14] = -(2.0f * back * front) / (back - front);
     }
 
-    void OrthographicProjection(GLfloat aspectRatio, GLfloat top, GLfloat right, GLfloat front, GLfloat back)
+    void OrthographicProjection(GLfloat aspectRatio, GLfloat top, GLfloat bottom, GLfloat right, GLfloat left, GLfloat front, GLfloat back)
     {
-        m_elements[0]  = 1.0f / right;
-        m_elements[5]  = 1.0f / top * aspectRatio;
+        m_elements[0]  = 2.0f / (right - left);
+        m_elements[5]  = 2.0f * aspectRatio / (top - bottom);
         m_elements[10] = -2.0f / (back - front);
+        m_elements[12] = -(right + left) / (right - left);
+        m_elements[13] = -(top + bottom) / (top - bottom);
         m_elements[14] = -(back + front) / (back - front);
     }
 

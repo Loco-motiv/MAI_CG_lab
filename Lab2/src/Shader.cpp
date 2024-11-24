@@ -56,32 +56,42 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     glDeleteShader(fragmentID);
 }
 
-void Shader::Use()
+void Shader::Use() const
 {
     glUseProgram(ID);
 }
 
 void Shader::SetBool(const std::string& name, const GLboolean value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+    Use();
+    glUniform1i(GetUniformLocation(name), (int)value);
 }
 
 void Shader::SetInt(const std::string& name, const GLint value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+    Use();
+    glUniform1i(GetUniformLocation(name), value);
 }
 
 void Shader::SetFloat(const std::string& name, const GLfloat value) const
 {
-    glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    Use();
+    glUniform1f(GetUniformLocation(name), value);
+}
+
+void Shader::SetFloatVec3(const std::string& name, const GLfloat valueX, const GLfloat valueY, const GLfloat valueZ)
+{
+    Use();
+    glUniform3f(GetUniformLocation(name), valueX, valueY, valueZ);
 }
 
 void Shader::SetFloatMatrix(const std::string& name, const GLfloat* matrix) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, matrix);
+    Use();
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, matrix);
 }
 
-void Shader::CheckCompileErrors(GLuint shader, std::string type)
+void Shader::CheckCompileErrors(GLuint shader, const std::string& type) const
 {
     GLint success;
     GLint length;
@@ -127,4 +137,16 @@ void Shader::CheckCompileErrors(GLuint shader, std::string type)
             }
         }
     }
+}
+
+GLint Shader::GetUniformLocation(const std::string& name) const
+{
+    GLint uniformLocation = glGetUniformLocation(ID, name.c_str());
+    if (uniformLocation == -1)
+    {
+        std::cout << "ERROR::SET_VALUE: " << name << " no such uniform value in program"
+                  << "\n -- --------------------------------------------------- -- " << std::endl;
+        return -1;
+    }
+    return uniformLocation;
 }
