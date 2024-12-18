@@ -149,6 +149,8 @@ void Camera::HandleCameraInput()
         m_cooldown         = 270;
         m_flagReleaseMouse = !m_flagReleaseMouse;
         (*m_sharedContext->window->GetWindow()).setMouseCursorVisible(m_flagReleaseMouse);
+        sf::Vector2i windowCenter = sf::Vector2i(m_sharedContext->window->GetWindowSize().x / 2, m_sharedContext->window->GetWindowSize().y / 2);
+        sf::Mouse::setPosition(windowCenter, *m_sharedContext->window->GetWindow());
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
