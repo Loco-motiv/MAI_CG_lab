@@ -84,6 +84,8 @@ public:
         m_elements[5]  = aspectRatio / tangent;
         m_elements[10] = -(back + front) / (back - front);
         m_elements[11] = -1.0f;
+        m_elements[12] = 0.0f;
+        m_elements[13] = 0.0f;
         m_elements[14] = -(2.0f * back * front) / (back - front);
     }
 
@@ -92,6 +94,7 @@ public:
         m_elements[0]  = 2.0f / (right - left);
         m_elements[5]  = 2.0f * aspectRatio / (top - bottom);
         m_elements[10] = -2.0f / (back - front);
+        m_elements[11] = 0.0f;
         m_elements[12] = -(right + left) / (right - left);
         m_elements[13] = -(top + bottom) / (top - bottom);
         m_elements[14] = -(back + front) / (back - front);

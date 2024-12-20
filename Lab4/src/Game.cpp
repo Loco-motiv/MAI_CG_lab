@@ -34,6 +34,11 @@ Game::Game() : m_window("Lab4", sf::Vector2u(800, 600)), m_GUI(&m_sharedContext,
     m_GUI.MakeButton("Stop following", std::bind([this]()
                                                  { m_flagFollow = !m_flagFollow; }));
     m_GUI.MakeSlider("Radius", &m_radius, 0, 10);
+
+    m_GUI.MakeSlider("Specular red", &m_cube->m_materialSpecular.x, 0, 1);
+    m_GUI.MakeSlider("Specular green", &m_cube->m_materialSpecular.y, 0, 1);
+    m_GUI.MakeSlider("Specular blue", &m_cube->m_materialSpecular.z, 0, 1);
+    m_GUI.MakeSlider("Shininess", &m_cube->m_materialShininess, 0, 256);
 }
 
 Game::~Game() {}
@@ -46,13 +51,6 @@ void Game::Update()
     MatrixFloat translationMatrix;
     MatrixFloat translationMatrix2;
     MatrixFloat rotationMatrix;
-    // MatrixFloat scaleModelMatrix;
-    // MatrixFloat projectionMatrix;
-    // MatrixFloat m_viewMatrix = m_camera.getViewMatrix();
-
-    // scaleModelMatrix.ScaleXYZ(m_scale);
-
-    //!
 
     if (m_flagRotate)
     {
@@ -74,32 +72,6 @@ void Game::Update()
     m_cube->m_translateMatrix = translationMatrix;
     m_cube->m_rotateMatrix    = rotationMatrix;
 
-    //!
-
-    // m_modelMatrix = translationMatrix * rotationMatrix * translationMatrix2 * scaleModelMatrix;
-
-    // if (m_flag)
-    // {
-    //     projectionMatrix.OrthographicProjection((float)m_window.GetWindowSize().x / (float)m_window.GetWindowSize().y,
-    //                                             1.0f, -1.0f, 1.0f, -1.0f, 0.1f, 100.0f);
-    // }
-    // else
-    // {
-    //     projectionMatrix.PerspectiveProjection(m_camera.getFOV(), (float)m_window.GetWindowSize().x / (float)m_window.GetWindowSize().y,
-    //                                            0.1f, 100.0f);
-    // }
-
-    // m_transformMatrix = projectionMatrix * m_viewMatrix * m_modelMatrix;
-
-    // modelMatrix      = MatrixFloat();
-    // scaleModelMatrix = MatrixFloat();
-    // modelMatrix.Move(1.0f, 1.0f, 1.0f);
-    // scaleModelMatrix.ScaleXYZ(0.2f);
-
-    // modelMatrix = modelMatrix * scaleModelMatrix;
-
-    // m_transformMatrixLight = projectionMatrix * m_viewMatrix * modelMatrix;
-
     m_sceneManager.Update();
 
     m_camera.Update(m_elapsed.asMilliseconds());
@@ -111,25 +83,6 @@ void Game::Render()
     m_window.BeginDraw();
 
     m_sceneManager.Render();
-
-    // m_graphics.m_shader->SetFloatVec3("light.ambient", m_lightColor.x * 0.1f, m_lightColor.y * 0.1f, m_lightColor.z * 0.1f);
-    // m_graphics.m_shader->SetFloatVec3("light.diffuse", m_lightColor.x * 0.9f, m_lightColor.y * 0.9f, m_lightColor.z * 0.9f);
-    // m_graphics.m_shader->SetFloatVec3("light.specular", 1.0f, 1.0f, 1.0f);
-    // m_graphics.m_shader->SetFloatVec3("light.position", 1.0f, 1.0f, 1.0f);
-    // m_graphics.m_shader->SetFloatVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-    // m_graphics.m_shader->SetFloatVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-    // m_graphics.m_shader->SetFloatVec3("material.specular", 0.5f, 0.5f, 0.5f);
-    // m_graphics.m_shader->SetFloat("material.shininess", 32.0f);
-
-    // m_graphics.m_shader->SetFloatVec3("viewPosition", m_camera.getPosition().x, m_camera.getPosition().y, m_camera.getPosition().z);
-    // m_graphics.m_shader->SetFloatMatrix("modelMatrix", m_modelMatrix.GetArray());
-    // m_graphics.m_shader->SetFloat("alpha", 1.0f); //* all objects are 100% opaque by default
-    // m_graphics.m_shader->SetFloatMatrix("transformMatrix", m_transformMatrix.GetArray());
-    // m_graphics.DrawCube();
-
-    // m_graphics.m_lightSourceShader->SetFloatMatrix("transformMatrix", m_transformMatrixLight.GetArray());
-    // m_graphics.m_lightSourceShader->SetFloatVec3("lightColor", m_lightColor.x, m_lightColor.y, m_lightColor.z);
-    // m_graphics.DrawLightSourceCube();
 
     m_GUI.Render();
 

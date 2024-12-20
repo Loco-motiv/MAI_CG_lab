@@ -31,10 +31,10 @@ public:
 
     MatrixFloat m_transformMatrix;
 
-    sf::Vector3f m_materialAmbient;
-    sf::Vector3f m_materialDiffuse;
-    sf::Vector3f m_materialSpecular;
-    GLfloat m_materialShininess;
+    sf::Vector3<GLdouble> m_materialAmbient;
+    sf::Vector3<GLdouble> m_materialDiffuse;
+    sf::Vector3<GLdouble> m_materialSpecular;
+    GLdouble m_materialShininess;
 
     GLfloat m_alpha;
 };
@@ -101,6 +101,10 @@ public:
     MatrixFloat m_viewMatrix;
 
     sf::Vector3f m_cameraPosition;
+
+    GLfloat lightAmbient  = 0.1f;
+    GLfloat lightDiffuse  = 0.9f;
+    GLfloat lightSpecular = 1.0f;
 
     GLboolean m_flagProjection = false;
 

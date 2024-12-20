@@ -23,31 +23,31 @@ Cube::Cube(SceneManager* l_sceneManager, sf::Vector3f l_position, sf::Vector3f l
 
     if (l_material == ObjectMaterial::obsidian)
     {
-        m_materialAmbient   = sf::Vector3f(0.05375f, 0.05f, 0.06625f);
-        m_materialDiffuse   = sf::Vector3f(0.18275f, 0.17f, 0.22525f);
-        m_materialSpecular  = sf::Vector3f(0.332741f, 0.328634f, 0.346435f);
-        m_materialShininess = 0.3f * 128.0f;
+        m_materialAmbient   = sf::Vector3<GLdouble>(0.05375f / m_sceneManager->lightAmbient, 0.05f / m_sceneManager->lightAmbient, 0.06625f / m_sceneManager->lightAmbient);
+        m_materialDiffuse   = sf::Vector3<GLdouble>(0.18275f / m_sceneManager->lightDiffuse, 0.17f / m_sceneManager->lightDiffuse, 0.22525f / m_sceneManager->lightDiffuse);
+        m_materialSpecular  = sf::Vector3<GLdouble>(0.332741f / m_sceneManager->lightSpecular, 0.328634f / m_sceneManager->lightSpecular, 0.346435f / m_sceneManager->lightSpecular);
+        m_materialShininess = 32.0f;
     }
     else if (l_material == ObjectMaterial::pearl)
     {
-        m_materialAmbient   = sf::Vector3f(0.25f, 0.20725f, 0.20725f);
-        m_materialDiffuse   = sf::Vector3f(1.0f, 0.829f, 0.829f);
-        m_materialSpecular  = sf::Vector3f(0.296648f, 0.296648f, 0.296648f);
-        m_materialShininess = 0.088f * 128.0f;
+        m_materialAmbient   = sf::Vector3<GLdouble>(0.25f / m_sceneManager->lightAmbient, 0.20725f / m_sceneManager->lightAmbient, 0.20725f / m_sceneManager->lightAmbient);
+        m_materialDiffuse   = sf::Vector3<GLdouble>(1.0f / m_sceneManager->lightDiffuse, 0.829f / m_sceneManager->lightDiffuse, 0.829f / m_sceneManager->lightDiffuse);
+        m_materialSpecular  = sf::Vector3<GLdouble>(0.296648f / m_sceneManager->lightSpecular, 0.296648f / m_sceneManager->lightSpecular, 0.296648f / m_sceneManager->lightSpecular);
+        m_materialShininess = 8.0f;
     }
     else if (l_material == ObjectMaterial::ruby)
     {
-        m_materialAmbient   = sf::Vector3f(0.1745f, 0.01175f, 0.01175f);
-        m_materialDiffuse   = sf::Vector3f(0.61424f, 0.04136f, 0.04136f);
-        m_materialSpecular  = sf::Vector3f(0.727811f, 0.626959f, 0.626959f);
-        m_materialShininess = 0.6f * 128.0f;
+        m_materialAmbient   = sf::Vector3<GLdouble>(0.1745f / m_sceneManager->lightAmbient, 0.01175f / m_sceneManager->lightAmbient, 0.01175f / m_sceneManager->lightAmbient);
+        m_materialDiffuse   = sf::Vector3<GLdouble>(0.61424f / m_sceneManager->lightDiffuse, 0.04136f / m_sceneManager->lightDiffuse, 0.04136f / m_sceneManager->lightDiffuse);
+        m_materialSpecular  = sf::Vector3<GLdouble>(0.727811f / m_sceneManager->lightSpecular, 0.626959f / m_sceneManager->lightSpecular, 0.626959f / m_sceneManager->lightSpecular);
+        m_materialShininess = 64.0f;
     }
     else if (l_material == ObjectMaterial::cyanPlastic)
     {
-        m_materialAmbient   = sf::Vector3f(0.0f, 0.1f, 0.06f);
-        m_materialDiffuse   = sf::Vector3f(0.0f, 0.50980392f, 0.50980392f);
-        m_materialSpecular  = sf::Vector3f(0.50196078f, 0.50196078f, 0.50196078f);
-        m_materialShininess = 0.25f * 128.0f;
+        m_materialAmbient   = sf::Vector3<GLdouble>(0.0f / m_sceneManager->lightAmbient, 0.1f / m_sceneManager->lightAmbient, 0.06f / m_sceneManager->lightAmbient);
+        m_materialDiffuse   = sf::Vector3<GLdouble>(0.50980392f / m_sceneManager->lightDiffuse, 0.50980392f / m_sceneManager->lightDiffuse, 0.50980392f / m_sceneManager->lightDiffuse);
+        m_materialSpecular  = sf::Vector3<GLdouble>(0.50196078f / m_sceneManager->lightSpecular, 0.50196078f / m_sceneManager->lightSpecular, 0.50196078f / m_sceneManager->lightSpecular);
+        m_materialShininess = 32.0f;
     }
 }
 
@@ -137,6 +137,8 @@ LightCube* SceneManager::MakeLightCube(sf::Vector3f l_position, sf::Vector3f l_r
 
 void SceneManager::Update()
 {
+    m_cameraPosition = m_sharedContext->camera->getPosition();
+
     m_viewMatrix = m_sharedContext->camera->getViewMatrix();
 
     if (m_flagProjection)
@@ -166,14 +168,17 @@ void SceneManager::Update()
 void SceneManager::Render()
 {
     m_sharedContext->graphics->m_shader->SetFloatVec3("light.ambient",
-                                                      m_lightSources[0]->m_lightColor.x * 0.1f,
-                                                      m_lightSources[0]->m_lightColor.y * 0.1f,
-                                                      m_lightSources[0]->m_lightColor.z * 0.1f);
+                                                      m_lightSources[0]->m_lightColor.x * lightAmbient,
+                                                      m_lightSources[0]->m_lightColor.y * lightAmbient,
+                                                      m_lightSources[0]->m_lightColor.z * lightAmbient);
     m_sharedContext->graphics->m_shader->SetFloatVec3("light.diffuse",
-                                                      m_lightSources[0]->m_lightColor.x * 0.9f,
-                                                      m_lightSources[0]->m_lightColor.y * 0.9f,
-                                                      m_lightSources[0]->m_lightColor.z * 0.9f);
-    m_sharedContext->graphics->m_shader->SetFloatVec3("light.specular", 1.0f, 1.0f, 1.0f);
+                                                      m_lightSources[0]->m_lightColor.x * lightDiffuse,
+                                                      m_lightSources[0]->m_lightColor.y * lightDiffuse,
+                                                      m_lightSources[0]->m_lightColor.z * lightDiffuse);
+    m_sharedContext->graphics->m_shader->SetFloatVec3("light.specular",
+                                                      m_lightSources[0]->m_lightColor.x * lightSpecular,
+                                                      m_lightSources[0]->m_lightColor.y * lightSpecular,
+                                                      m_lightSources[0]->m_lightColor.z * lightSpecular);
     m_sharedContext->graphics->m_shader->SetFloatVec3("light.position", 1.0f, 1.0f, 1.0f);
 
     for (const auto elem : m_objects)

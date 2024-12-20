@@ -22,7 +22,7 @@ Graphics::~Graphics()
 void Graphics::ConfigureOpenGL()
 {
     gladLoadGL();
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glEnable(GL_CULL_FACE);  //* enable culling faces
     glCullFace(GL_BACK);     //* cull back face
@@ -177,12 +177,12 @@ void Graphics::MakeCubeVAO()
         { -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, -1.0f,  0.0f,  0.0f }, //* bottom left back
         { -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -1.0f,  0.0f,  0.0f }, //* top left back
         //* Right face
-        {  0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f,  1.0f,  0.0f,  0.0f }, //* top right front
+        {  0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,  1.0f,  0.0f,  0.0f }, //* top right front
         {  0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,  1.0f,  0.0f,  0.0f }, //* bottom right front
         {  0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  1.0f,  0.0f,  0.0f }, //* bottom right back
         {  0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  1.0f,  0.0f,  0.0f }, //* top right back
         //* Top face
-        {  0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f }, //* top right front
+        {  0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,  0.0f,  1.0f,  0.0f }, //* top right front
         {  0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  0.0f,  1.0f,  0.0f }, //* top right back
         { -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f }, //* top left back
         { -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f }, //* top left front
