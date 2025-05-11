@@ -16,9 +16,9 @@ Game::Game() : m_window("Lab2", sf::Vector2u(800, 600)), m_GUI(&m_sharedContext,
     m_GUI.MakeSlider("Turn speed", &m_turnSpeed, 0, 10);
     m_GUI.MakeButton("Projection switch", temp);
     m_GUI.MakeSlider("Scale", &m_scale, 0, 6);
-    m_GUI.MakeSlider("Element gap", &(m_GUI.m_elementGap), 0, 0.11);
-    m_GUI.MakeSlider("Element height", &(m_GUI.m_elementHeight), 0.15, 0.30);
-    m_GUI.MakeSlider("Left border", &(m_GUI.m_leftBorder), -1, 0.85);
+    // m_GUI.MakeSlider("Element gap", &(m_GUI.m_elementGap), 0, 0.11);
+    // m_GUI.MakeSlider("Element height", &(m_GUI.m_elementHeight), 0.15, 0.30);
+    // m_GUI.MakeSlider("Left border", &(m_GUI.m_leftBorder), -1, 0.85);
     m_GUI.MakeHUDElement("Time", getTime);
 
     m_viewMatrix.Move(0.0f, 0.0f, -3.0f);

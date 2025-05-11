@@ -175,6 +175,7 @@ vec3 TraceRay(vec3 rayOrigin, vec3 rayDir, out float totalDistance) {
         }
 
         if (nearestT == 10000.0) {
+            // totalDistance = 10.0;
             break;
         }
 
